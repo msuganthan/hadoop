@@ -1,0 +1,159 @@
+Hadoop is a framework written in Java for running application on large cluster of commodity hardware and incorporates features similiar to those of the Google File System(GFS) and of the MapReduce computing paradigm. Hadoop's HDFS is a highly fault-tolerant distributed file system and like, Hadoop in general, designed to be deployed on low-cost hardware. It provides high throughput access to application data is suitable for application that have large data sets.
+
+
+DataNode:
+=========
+
+	It stores data in the Hadoop File System. A functional file system has more than one DataNode with the data replicated accross them.
+
+NameNode:
+=========
+
+	It is the centerpiece of the HDFS file system. It keeps the directory of all files in the file system and tracks where across the cluster the file data is kept. It does not store the data of these file itself.
+	
+Jobtracker:
+===========
+
+	It is the service within hadoop that farms out MapReduce to specific nodes in the cluster, ideally the nodes that have the data, or atleast are in the same rack.
+
+TaskTracker:
+============
+	
+	Is a node in the cluster that accepts task- Map, Reduce, and Shuffle operation - from a Job Tracker.
+
+Secondary Namenode:
+===================
+
+	Secondary Namenode whole purpose is to have checkpoint in HDFS. It is just a helper node for namenode.
+
+HADOOP INSTALLATION:
+====================
+
+	Single-Node Installation
+
+	Pre-requisites: Java 1.5+
+
+	Add a dedicated Hadoop system user
+
+		user@ubuntu:~$ sudo addgroup hadoop_group
+		user@ubuntu:~$ sudo adduser --ingroup hadoop_group hduser1
+
+	Add hduser1 to the sudo group
+
+		user@ubuntu:~$ sudo adduser hduser1 sudo
+
+	Configuring SSH:
+	================
+
+	The hadoop control scripts rely on SSH to perform cluster-wide operations. For example, there is a script for start and stop all the daemons in the clusters. To work seamlessly, SSH needs to be setup to allow password-less login for the hadoop user from machines in the cluster. 
+	
+	The simplest way to achieve this is to generate a public/private key pair and it will be shared across the cluster.
+
+	Hadoop required SSH acess to manage its nodes i.e. remote machines plus your local machine. For our single-node setup of Hadoop, we therefore need to configure SSH access to localhost to the hduser user we created in the earlier section.
+
+	user@ubuntu:~$ su – hduser1
+	hduser1@ubuntu:~$ ssh-keygen -t rsa -P ""
+
+	You have to enable SSH access to your local machine with this newly created key which is done by cat command.
+
+	hduser1@ubuntu:~$   cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+
+	Connect to localhost
+
+	hduser@ubuntu:~$ ssh localhost
+
+Main installation:
+==================
+
+	Add the following entries to .bashrc file
+
+	# Set Hadoop-related environment variables
+	export HADOOP_HOME=/usr/local/hadoop
+	# Add Hadoop bin/ directory to PATH
+	export PATH= $PATH:$HADOOP_HOME/bin
+
+
+	Configuration:
+	==============
+
+	conf/hadoop-env.sh
+	-------------------
+
+		#export JAVA_HOME=/usr/lib/j2sdk1.5-sun	
+
+	conf/*-site.xml
+
+		Now we create the directory and set the required ownership and permissions
+
+		hduser@ubuntu:~$ sudo mkdir -p /app/hadoop/tmp
+		hduser@ubuntu:~$ sudo chown hduser:hadoop /app/hadoop/tmp
+		hduser@ubuntu:~$ sudo chmod 750 /app/hadoop/tmp
+
+		The last line gives reading and writing permissions to the /app/hadoop/tmp directory
+
+
+	conf/core-site.xml:
+	-------------------
+
+	Set the base for other temporary directories and the name of the default file system.
+
+	<property>
+	    <name>hadoop.tmp.dir</name>
+	    <value>/app/hadoop/tmp</value>
+	    <description>A base for other temporary directories.</description>
+	</property>
+
+	<property>
+	    <name>fs.default.name</name>
+	    <value>hdfs://localhost:54310</value>
+	    <description>The name of the default file system.  A URI whose
+	    scheme and authority determine the FileSystem implementation.  The
+	    uri's scheme determines the config property (fs.SCHEME.impl) naming
+	    the FileSystem implementation class.  The uri's authority is used to
+	    determine the host, port, etc. for a filesystem.</description>
+	</property>
+
+	conf/mapred-site.xml:
+	---------------------
+
+	Set the host and port that the Map reduce job tracker runs at.
+
+	<property>
+	<name>mapred.job.tracker</name>
+	    <value>localhost:54311</value>
+	    <description>The host and port that the MapReduce job tracker runs
+	    at.  If "local", then jobs are run in-process as a single map
+	    and reduce task.
+	    </description>
+	</property>
+
+	conf/hdfs-site.xml:
+	-------------------
+
+	Set the actual number of replication that can be set in the file system.
+
+	<property>
+	    <name>dfs.replication</name>
+	    <value>1</value>
+	    <description>Default block replication.
+	    The actual number of replications can be specified when the file is created.
+	    The default is used if replication is not specified in create time.
+	    </description>
+	</property>
+
+	Formatting the HDFS filesystem via the NameNode:
+	================================================
+
+	hduser@ubuntu:~$ /usr/local/hadoop/bin/hadoop namenode –format
+
+	Starting your single-node cluster:
+	==================================
+
+	hduser@ubuntu:~$ sudo chmod -R 777 /usr/local/hadoop
+
+	Run the command:
+	================
+
+	hduser@ubuntu:~$ /usr/local/hadoop/bin/start-all.sh
+
+	
