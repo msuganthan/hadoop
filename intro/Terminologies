@@ -1,0 +1,14 @@
+Terminologies:
+==============
+
+	TaskTrackers:
+	=============
+
+	Is a node in the cluster that accepts task - Map, Reduce and Shuffle operations.
+
+	1. Every TaskTracker is configured with a set of slots, these indicated the number of task that it can accept. 
+	2. When the JobTracker tries to find somewhere to schedule a task within the MapReduce operations, it first looks for an empty slot on the same server that host the DataNode containing the data, if not, it looks for an empty slot on a machine in the same rack.
+
+	The TaskTracker spawns a seperate JVM processes to do the actual work; this is to ensure that process failure does not take down the task tracker. The TaskTracker monitor these spawned processes, capturing the output and exit codes. When the process finishes, successfully or not, the tracker notifies the JobTracker. The TaskTracker also sends the heart-beat message to the JobTracker that it is still alive. These message also inform the JobTracker the number of available slot, so the JobTracker can stay up to data with where in the cluster work can be delegated.
+
+	

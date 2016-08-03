@@ -97,7 +97,7 @@ Hadoop Architecture:
 	Stage 2:
 	========
 
-	The Hadoop job client then submit the job and configuration to the JobTracker which then assigns the responsibility of distrubing the software/configuration to the slaves, scheduling tasks and monitoring them, providing status and disgnostic information to the job-client.
+	The Hadoop job client then submit the job and configuration to the JobTracker which then assigns the responsibility of distributing the software/configuration to the slaves, scheduling tasks and monitoring them, providing status and disgnostic information to the job-client.
 
 	Stage 3:
 	=========
