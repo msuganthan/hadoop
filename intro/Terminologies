@@ -27,4 +27,15 @@ Terminologies:
 
 	The TaskTracker spawns a seperate JVM processes to do the actual work; this is to ensure that process failure does not take down the task tracker. The TaskTracker monitor these spawned processes, capturing the output and exit codes. When the process finishes, successfully or not, the tracker notifies the JobTracker. The TaskTracker also sends the heart-beat message to the JobTracker that it is still alive. These message also inform the JobTracker the number of available slot, so the JobTracker can stay up to data with where in the cluster work can be delegated.
 
+	NameNode:
+	=========
+
+	Is a centerpiece of an HDFS file system. 
+
+	It keeps the directory tree of all files in the file system, and tracks where across the cluster the file data is kept. It does not store the data of these files itself. 
+
+	Client applications talk to the NameNode whenever they wish to locate a file, or when they want to add/copy/move/delete a file. The NameNode responds the successful requests by returning a list of relevant DataNode servers where the data lives. 
+
+	The NameNode is a Single Point of Failure for the HDFS Cluster. HDFS is not currently a High Availability system. When the NameNode goes down, the file system goes offline. There is an optional SecondaryNameNode that can be hosted on a separate machine.
+
 	
