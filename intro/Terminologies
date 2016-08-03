@@ -38,4 +38,14 @@ Terminologies:
 
 	The NameNode is a Single Point of Failure for the HDFS Cluster. HDFS is not currently a High Availability system. When the NameNode goes down, the file system goes offline. There is an optional SecondaryNameNode that can be hosted on a separate machine.
 
+	DataNode:
+	=========
+	
+	A DataNode stores data in the [HadoopFileSystem]. A functional filesystem has more than one DataNode, with data replicated across them.
+	On startup, a DataNode connects to the NameNode; spinning until that service comes up.It then responds to requests from the NameNode for filesystem operations. 
+
+	Client applications can talk directly to a DataNode, once the NameNode has provided the location of the data. 
+
+	 TaskTracker instances can, indeed should, be deployed on the same servers that host DataNode instances, so that MapReduce operations are performed close to the data. 
+
 	
