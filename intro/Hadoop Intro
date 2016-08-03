@@ -1,0 +1,106 @@
+Hadoop: 
+=======
+
+	Hadoop is an Apache open source framework written in java that allows distributed processing of large datasets across clusters of computers using simple programming models. It works in an environment that provides distributed storage and computation across clusters of computers. Hadoop is designed to scala up from single single to thousand of machines, each offering local computation and storage.
+
+Hadoop Architecture:
+====================
+
+	Includes following four modules:
+
+	Hadoop Common:
+	==============
+		 These are Java libs and utilities required by other Hadoop modules. The libs provides filesystem and OS level abstraction and contains the necessary Java files and scripts required to start Hadoop
+
+	Hadoop YARN:
+	============
+		This is a framework for job scheduling and cluster resource management.
+
+	Hadoop Distributes File System(HDFS):
+	=====================================
+
+		A distributes file system that provides high-throughput access to application data.
+
+	Hadoop MapReduce:
+	=================
+		
+		This is YARN-based system for parallel processing of large data sets.
+	
+
+	MapReduce:
+	==========
+
+	Is a software framework for easily writing application which process big amounts of data in-parallel on large clusters of commodity hardware in a reliable, fault-tolerant manner.
+
+	It refer to two different tasks:
+
+		Map Task:
+		========== 
+			Which takes input data and converts it into a set of data, where individual elements are broken down into tuples.
+		
+		Reduce Task:
+		=============
+
+			This task takes output from map task as input and combines those data tuples into a smaller set of tuples.
+
+	Typically both input and output are stored in a file-system. The framework takes care of scheduling tasks, monitoring them and re-executes the failed tasks.
+
+	The MapReduces framework consists of a single master 
+
+		JobTracker and one slave 
+		TaskTracker per cluster node.
+
+	The master is responsible for 
+
+		1. resource management 
+		2. tracking resource consumption/availablity and 
+		3. scheduling the jobs componenet tasks on the slaves
+		4. monitoring them 
+		5. re-executing the failed tasks.
+	Slave executes the tasks as directed by the master and provide task-statu information to the master periodically.
+
+
+	Hadoop Distributed File System:
+	===============================
+
+	Hadoop can work directly with any mountable distributes file system such as Local FS, HFTP FS, S3 FS and others, but the most common file system used by Hadoop is the HDFS.
+
+	HDFS is based on GFS and provides a distributed file system that is designed to run a large cluster of small computer machines in a reliable, fault-tolerant manner.
+
+	HDFS uses a master/slave architecture where master consists of a 
+
+		single Namenode that manages the file system metadata and 
+		
+		one or more slave DataNodes that store tha actual data.
+
+
+	A file in an HDFS namespace is split into several blocks and those blocks are stored in a set of DataNodes. 
+
+	The NameNode determines the mapping of blocks to the DataNodes. 
+	
+	The DataNodes takes care of read and write operation with the file system. They also take care of block creation, deletion and replication based on instruction given by NameNode.
+	
+
+	How Hadoop Work?
+	=================
+
+	A user/application can submit a job to the Hadoop for required process by specifying the following items.
+
+	Stage 1:
+	========
+	
+	1. The location of the input and output files in the distributes file system.
+	2. The java classes in the form of jar file containing the implementation of map and reduce functions.
+	3. The job configuration by setting different parameters specific to the job.
+
+	
+	Stage 2:
+	========
+
+	The Hadoop job client then submit the job and configuration to the JobTracker which then assigns the responsibility of distrubing the software/configuration to the slaves, scheduling tasks and monitoring them, providing status and disgnostic information to the job-client.
+
+	Stage 3:
+	=========
+
+	The Tasktracker on different nodes executes the task as per MapReduce implementation and output of the reduce function is stored into the output file on the file system.
+

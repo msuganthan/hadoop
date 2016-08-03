@@ -157,3 +157,7 @@ Main installation:
 	hduser@ubuntu:~$ /usr/local/hadoop/bin/start-all.sh
 
 	
+Multinode installation:
+=======================
+
+	We build a multi-node cluster merge two or more single-noe clusters into one multi-node cluster in which one Ubuntu box will become the designated master but also act as a slave, and the other box will become only a slave.
