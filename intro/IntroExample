@@ -1,0 +1,74 @@
+Example:
+
+	A client having a file of size 200 MB(just for easy understanding) with filename file.txt.
+
+	So this 200 MB is splitted in number of 64MB of data.
+
+	We are going to get 4 64 MB of blocks will be given. Just say that
+
+	a.txt - 64 MB
+	b.txt - 64 MB
+	c.txt - 64 MB
+	d.txt - 8 MB
+
+	1. The client will first contact with Namenode by sending a request for stroing 200MB of data.
+	2. Now the client will take all the metadata
+
+		fileName
+		fileSize
+		a.txt - 64 MB
+		b.txt - 64 MB
+		c.txt - 64 MB
+		d.txt - 8 MB
+	3. Now the client send some system number, where to store this data.
+	4. Now the client will put the data in dataNode using the info provided by NameNode.
+	What if any of the system is down, so it will maintain some replication. Hadoop by default will provide 3 replication(to overcome the data loss problem).
+
+	This replication details will send back to client by datanode.
+	All this datanode will proper heart bit to namenode.
+	
+	Block report is there - saying that this datanode has been allocated with some block
+	Heart bit - says that this datanode is still alive and working
+
+	Block Report will look like for 
+
+		a.txt - in 1, 2, 4 system number
+		b.txt - in 3, 5, 8 system number
+		c.txt - in 5, 6, 7 system number
+		d.txt - in 7, 9, 10 system number
+
+	This is what storage in HDFS
+
+	Storeage was done.
+
+=====================================================
+
+Processing:
+===========
+	Now JobTracker will come in picture.
+	
+	JobTracker will send the request to Namenode. In response will send the proper response.
+	
+	JobTracker will assign this task to Tracker will the required input with some computation.
+
+	Map:
+	====
+	Application that computation on the data is called Map.
+
+	Like that it will do the same for another files too. So at the end there will be lot of Maps.
+
+	Input-Splits:
+	=============
+
+	a.txt, b.txt, c.txt, d.txt are called input splits. 
+	How many number of input splits are there those many number of mappers will be there. Hadoop will take care of that.
+
+	All these taskTracker will give heart bit to JobTracker. Along with heart bit, tasktracker will give available block report to the JobTracker saying that I can take some task as I having these many free blocks.
+
+	Now just say 
+	
+	for a.txt, b.txt, c.txt, d.txt each TaskTracker is giving output of 4 KB of file.
+
+	Now Reducer will come into picture to combine all mapper output. By default there will one reducer.
+
+	Output details will be given back to nameNode.

@@ -48,4 +48,28 @@ Terminologies:
 
 	 TaskTracker instances can, indeed should, be deployed on the same servers that host DataNode instances, so that MapReduce operations are performed close to the data. 
 
+	HDFS:
+	=====
+
+	To storing huge data-set with cluster of commodity hardware with streaming access pattern.
+
+	Streaming access pattern:
+	=========================
+
+	Write once, read any number of time but don't change the content of the file, once u kept the data in HDFS.
+
 	
+	Master Services
+
+		Namenode - can talk to DataNode
+		SecondaryNamenode
+		JobTracker - can talk to TaskTracker
+
+		Every master service can talk to each other
+
+	Slave Services
+	
+		DataNode - slave service for NameNode
+		TaskTracker - slave service for JobTracker
+
+		Every slave service can talk to each other

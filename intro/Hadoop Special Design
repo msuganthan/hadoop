@@ -1,0 +1,8 @@
+Hadoop Special Design:
+======================
+
+	On top existing hard-disk, we are going to install hadoop with HDFS. This HDFS was by default given some block size, i.e. 64 MB. or you can make it as 128MB also.
+
+	Here we won't lose any block like normal hard-disk.
+
+	Why is this design? Or Hadoop has to store more metadata.
