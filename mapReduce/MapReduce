@@ -1,0 +1,146 @@
+MapReduce FlowChart:
+====================
+
+	Word Count example
+	
+	This is my file, (file.txt) 200MB
+	
+	hi how are you
+	how is your job
+	how is your family
+	how is you sister
+	how is your brother
+	what is the time now
+	what is the strength of hadoop
+	
+	will get splitted into 4 blocks 3*64MB and 1*8MB
+	
+	hi how are you
+	how is your job
+	======================= 64MB
+	how is your family
+	how is you sister
+	======================= 64MB
+	how is your brother
+	what is the time now
+	========================= 64MB
+	what is the strength of hadoop
+	================================= 8MB
+
+	Running the program like this
+	
+	 hadoop jar test.jar DriverCode file.txt TestOutput
+
+						      input file
+			|			|			|			|
+		inputsplit		inputsplit 		inputsplit		inputsplit
+			| ^			| ^			| ^			| ^
+			v |			v | 			v |			v |
+		RecordReader		RecordReader		RecordReader		RecordReader
+			|			|			|			|
+			v			v			v			v
+			Mapper			Mapper			Mapper			Mapper
+							  |
+							  v
+						    RecordWriter
+		
+
+		Points to note:
+		===============
+		
+			1. For each and every splits there will be one mapper.
+			2. This Hadoop can run only with Map and Reduce
+			3. Hadoop is going to store your data in the form of HDFS
+			4. To process that we need MapReducec
+			5. Hadoop can run your map reduce in key, value pairs only
+			6. Mapper can work only with key, value pairs only
+			7. Reducer can work only with key, value pairs only
+
+		So we have to convert all the input text into key, value pairs so that this Mapper can work, so for that reason one more interface is there 
+			i.e. RecordReader
+			8. So for every inputSplit and every Mapper, there will be one RecordReader
+
+			In hadoop terminology, we don't call each lines as lines, we call them as records
+
+		So in the first inputSplit, there is two records. For recordreader we need not need to write any code, hadoop will take care of that. But on what basis this record reader reading this input. Is based on four formats for file
+			
+			1. TextInputFormat
+			2. KeyValueTextInputFormat
+			3. SequenceFileInputFormat
+			4. SequenceFileAsTextInputFormat
+
+			
+		if suppose the file is text input format file, your RecordReader will read this line, it will convert your line into key, value pair as 
+			(byteOffset, entireLine) - byteOffset is address of the line
+		so intially, 
+			the first line will be converted into (0, hi how are you)
+			the second line will be converted into (16, how is your job)
+
+		Points to note:
+		===============
+			For each and every line, these mapper will be running once under each inputsplit. If there is 10 lines the mapper will run 10 times.
+
+			There situation obviously suits to parallel processing. So we can run this in multiple system and can get the output in less time.
+
+		Hadoop has introduced Box classes for all your primitive type for this key, value pairs.
+
+		Box Classes:
+		============
+
+		int -> IntWritable 
+			conversion 
+				1. new IntWritable(int) 
+				2. get() method()
+		long -> LongWritable
+		float -> FloutWritable
+		double -> DoubleWritable
+		String -> Text			===> toString() method
+		char	-> Text			
+
+		
+		So here LongWritable is feasible for key type and Text is feasible for value type. Because this is by default.
+
+
+		If the file is KeyValueTextInputFormat or SequenceFileInputFormat, you should specify explicitly in you specify your driverCode.
+
+		As per the logic what we have written in our Mapper code, Mapper output is 
+
+			Mapper 1 ==> 		 (hi, 1)  (how, 1)
+						 (how, 1) (is, 1)
+						 (are, 1) (your, 1)
+						 (you, 1) (job, 1)
+				 
+			Mapper 2 ==> 		(how, 1)  (how, 1)
+						 (is, 1) (is, 1)
+						 (your, 1) (your, 1)
+						 (family, 1) (sister, 1)
+						 
+			Mapper 3 ==> 		(how, 1)  (what, 1)
+						 (is, 1) (is, 1)
+						 (your, 1) (time, 1)
+						 (brother, 1) (now, 1)
+						 
+			Mapper 4 ==> 		(what, 1)  
+						 (is, 1) 
+						 (the, 1) 
+						 (strength, 1) 
+
+		Now Reducer will come in picture. This will try to combine all your key, value pairs
+
+		Intermediate Data:
+		==================
+		
+			The data which is been generated in b/w Mapper and Reducer.
+
+		In the Intermediate Data there is enough duplicate keys, but we should not have duplicate key. In that sense this intermediate phase can be done in two more phases. i.e. Shuffling and Sorting
+
+		Shuffling:
+		==========
+
+			Will try to combine all your value associate to single identical key. For suppose
+
+			how,[1, 1, 1, 1, 1, 1]
+			is, [1, 1, 1, 1, 1, 1]
+
+		44: 10
+
